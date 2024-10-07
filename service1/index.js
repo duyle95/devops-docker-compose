@@ -4,7 +4,7 @@ const app = express();
 const axios = require("axios");
 const port = 8199;
 
-app.get("/fetch-container-file", async (req, res) => {
+app.get("/", async (req, res) => {
   try {
     const response = await axios.get(
       "http://golang-service2:3001/get-container-info",
