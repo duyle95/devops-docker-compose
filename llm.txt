@@ -1,0 +1,7 @@
+- The used LLM tool: ChatGPT
+- Motivation/reason to use LLM: 
+I use it together with Google. I want to get in-depth explanation on different concepts and get more opinions on the bugs I faced during working on the exercise.
+- How and why LLM helped: 
+Sometimes it provides a more condense and precise answer to the problem than "googling".
+- What kind of mistakes LLM did: 
+It does ok-ish with small snippets of codes, but it gets quite bad when codes get more complex. It also lacks certain common sense, like it tries to use deprecated methods while there are definitely alternatives...

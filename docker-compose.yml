@@ -1,0 +1,20 @@
+services:
+  node-service:
+    build: ./service1
+    ports:
+      - "8199:8199"
+    networks:
+      - test-network
+
+  golang-service2:
+    build: ./service2
+    expose:
+      - "3001"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - test-network
+
+networks:
+  test-network:
+    driver: bridge

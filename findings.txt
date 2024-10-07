@@ -1,0 +1,7 @@
+Some of my findings on what containers share with the host:
+
+- Containers has their own filesystem, but it can also access to the host filesystem if we mount them into the container.
+For example, I need to mount Docker socket file in my machine (host) to allow golang-service (service2) running in the container connect to Docker daemon.
+
+- Each container has its own networking configuration, but it can also connect to the host network, or be part of customized networking.
+In this exercise, both services live under the same (non-host) network, and only node-service (service1) can be exposed to the host.

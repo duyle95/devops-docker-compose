@@ -1,0 +1,12 @@
+List of Docker containers:
+
+CONTAINER ID   IMAGE                                     COMMAND                  CREATED          STATUS          PORTS                    NAMES
+de5acc8514b6   docker-compose-exercise-node-service      "docker-entrypoint.s…"   45 seconds ago   Up 43 seconds   0.0.0.0:8199->8199/tcp   docker-compose-exercise-node-service-1
+b6a0aeee19e5   docker-compose-exercise-golang-service2   "./app"                  3 minutes ago    Up 43 seconds   3001/tcp                 docker-compose-exercise-golang-service2-1
+
+List of Docker networks:
+NETWORK ID     NAME                                   DRIVER    SCOPE
+91875d47d6be   bridge                                 bridge    local
+96d1398baf7b   docker-compose-exercise_test-network   bridge    local
+afddcfd7f82a   host                                   host      local
+853d2ab6b7ad   none                                   null      local
