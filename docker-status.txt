@@ -1,12 +1,17 @@
 List of Docker containers:
 
-CONTAINER ID   IMAGE                                     COMMAND                  CREATED          STATUS          PORTS                    NAMES
-de5acc8514b6   docker-compose-exercise-node-service      "docker-entrypoint.s…"   45 seconds ago   Up 43 seconds   0.0.0.0:8199->8199/tcp   docker-compose-exercise-node-service-1
-b6a0aeee19e5   docker-compose-exercise-golang-service2   "./app"                  3 minutes ago    Up 43 seconds   3001/tcp                 docker-compose-exercise-golang-service2-1
+CONTAINER ID   IMAGE                                    COMMAND                  CREATED          STATUS          PORTS                  NAMES
+98b252444fd7   docker-compose-exercise-nginx            "/docker-entrypoint.…"   32 seconds ago   Up 30 seconds   0.0.0.0:8189->80/tcp   docker-compose-exercise-nginx-1
+087188a7e646   docker-compose-exercise-node-service-3   "docker-entrypoint.s…"   32 seconds ago   Up 30 seconds                          docker-compose-exercise-node-service-3-1
+213aa541561e   docker-compose-exercise-node-service-2   "docker-entrypoint.s…"   32 seconds ago   Up 30 seconds                          docker-compose-exercise-node-service-2-1
+923596828bed   docker-compose-exercise-node-service-1   "docker-entrypoint.s…"   32 seconds ago   Up 30 seconds                          docker-compose-exercise-node-service-1-1
+b2e808a7af30   docker-compose-exercise-golang-service   "./app"                  5 minutes ago    Up 30 seconds   3001/tcp               docker-compose-exercise-golang-service-1
+
 
 List of Docker networks:
-NETWORK ID     NAME                                   DRIVER    SCOPE
-91875d47d6be   bridge                                 bridge    local
-96d1398baf7b   docker-compose-exercise_test-network   bridge    local
-afddcfd7f82a   host                                   host      local
-853d2ab6b7ad   none                                   null      local
+
+NETWORK ID     NAME                                DRIVER    SCOPE
+91875d47d6be   bridge                              bridge    local
+b5f4037e3419   docker-compose-exercise_mynetwork   bridge    local
+afddcfd7f82a   host                                host      local
+853d2ab6b7ad   none                                null      local

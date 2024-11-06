@@ -10,6 +10,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/client"
 )
@@ -18,6 +19,8 @@ func main() {
 	os.Setenv("DOCKER_API_VERSION", "1.43")
 	http.HandleFunc("/get-container-info", getContainerInfoFile)
 
+	http.HandleFunc("/stop-all-containers", stopAllContainers)
+
 	err := http.ListenAndServe(":3001", nil)
 	if err != nil {
 		fmt.Printf("error starting server: %s\n", err)
@@ -25,7 +28,52 @@ func main() {
 	}
 }
 
+func stopAllContainers(w http.ResponseWriter, r *http.Request) {
+	log.Println("Received request to stop all containers")
+	dockerClient, err := client.NewClientWithOpts(client.FromEnv)
+	if err != nil {
+		fmt.Println(err)
+		panic(err)
+	}
+	defer dockerClient.Close()
+
+	containers, err := dockerClient.ContainerList(context.Background(), container.ListOptions{All: true})
+	if err != nil {
+		panic(err)
+	}
+
+	var golangContainers, otherContainers []types.Container
+
+	for _, c := range containers {
+		if strings.Contains(c.Image, "golang") {
+			golangContainers = append(golangContainers, c)
+		} else {
+			otherContainers = append(otherContainers, c)
+		}
+	}
+
+	for _, c := range otherContainers {
+		stopContainer(dockerClient, c)
+	}
+
+	for _, c := range golangContainers {
+		stopContainer(dockerClient, c)
+	}
+}
+
+func stopContainer(dockerClient *client.Client, c types.Container) {
+	timeout := 10
+	err := dockerClient.ContainerStop(context.Background(), c.ID, container.StopOptions{
+		Timeout: &timeout,
+	})
+	if err != nil {
+		log.Printf("Error stopping container: %v", err)
+	}
+	log.Printf("Successfully stopped container [ID:%s] - [Image:%s]", c.ID, c.Image)
+}
+
 func getContainerInfoFile(w http.ResponseWriter, r *http.Request) {
+	log.Println("Received request to get all container info")
 	fileName := "containers_info.txt"
 	outputFile, err := os.Create(fileName)
 	if err != nil {
@@ -62,26 +110,22 @@ func writeContainerDetailsToFile(outputFile *os.File) {
 		panic(err)
 	}
 
-	expectedContainerName := []string{"node-service", "golang-service"}
-
 	for _, container := range containers {
-		if !strings.Contains(container.Image, expectedContainerName[0]) && !strings.Contains(container.Image, expectedContainerName[1]) {
-			continue
-		}
-
 		writeOutputToFile(outputFile, fmt.Sprintf("Service: %s\n\n", container.Image))
 
-		getIPAddressAndUptimeAndWriteToFile(dockerClient, container.ID, outputFile)
+		writeIPAddressAndUptimeToFile(dockerClient, container.ID, outputFile)
 
-		execCommandAndWriteOutputToFile(dockerClient, container.ID, outputFile, "List of running processes:\n", "ps", "-a")
+		output, _ := execCommandInContainer(dockerClient, container.ID, "ps", "-a")
+		writeOutputToFile(outputFile, fmt.Sprintf("%s %s\n", "List of running processes:\n", string(output)))
 
-		execCommandAndWriteOutputToFile(dockerClient, container.ID, outputFile, "Available disk space:\n", "df", "-h")
+		output, _ = execCommandInContainer(dockerClient, container.ID, "df", "-h")
+		writeOutputToFile(outputFile, fmt.Sprintf("%s %s\n", "Available disk space:\n", string(output)))
 
 		writeOutputToFile(outputFile, "\n\n")
 	}
 }
 
-func getIPAddressAndUptimeAndWriteToFile(cli *client.Client, containerID string, file *os.File) {
+func writeIPAddressAndUptimeToFile(cli *client.Client, containerID string, file *os.File) {
 	containerInfo, err := cli.ContainerInspect(context.Background(), containerID)
 	if err != nil {
 		log.Printf("Error when inspecting container: %v", err)
@@ -103,7 +147,7 @@ func getIPAddressAndUptimeAndWriteToFile(cli *client.Client, containerID string,
 	writeOutputToFile(file, fmt.Sprintf("Time since last boot: %f minutes\n\n", time.Since(startedAt).Minutes()))
 }
 
-func execCommandAndWriteOutputToFile(cli *client.Client, containerID string, file *os.File, cmdDesc string, cmd ...string) {
+func execCommandInContainer(cli *client.Client, containerID string, cmd ...string) ([]byte, error) {
 	respID, err := cli.ContainerExecCreate(context.Background(), containerID, container.ExecOptions{
 		AttachStdout: true,
 		AttachStderr: true,
@@ -112,22 +156,23 @@ func execCommandAndWriteOutputToFile(cli *client.Client, containerID string, fil
 	})
 	if err != nil {
 		log.Printf("Error when creating exec instance in container: %v", err)
-		return
+		return nil, err
 	}
 
 	resp, err := cli.ContainerExecAttach(context.Background(), respID.ID, container.ExecAttachOptions{})
 	if err != nil {
 		log.Printf("Error when attaching to exec instance in container: %v", err)
-		return
+		return nil, err
 	}
 	defer resp.Close()
 
 	output, err := io.ReadAll(resp.Reader)
 	if err != nil {
 		log.Printf("Error when reading exec output from container: %v", err)
-		return
+		return nil, err
 	}
-	writeOutputToFile(file, fmt.Sprintf("%s %s\n", cmdDesc, string(output)))
+
+	return output, nil
 }
 
 func writeOutputToFile(file *os.File, data string) {

@@ -1,20 +1,44 @@
 services:
-  node-service:
+  node-service-1:
     build: ./service1
-    ports:
-      - "8199:8199"
+    environment:
+      - PORT=3000 # check why this makes it work
     networks:
-      - test-network
+      - mynetwork
 
-  golang-service2:
+  node-service-2:
+    build: ./service1
+    environment:
+      - PORT=3000
+    networks:
+      - mynetwork
+
+  node-service-3:
+    build: ./service1
+    environment:
+      - PORT=3000
+    networks:
+      - mynetwork
+
+  golang-service:
     build: ./service2
     expose:
       - "3001"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
-      - test-network
+      - mynetwork
+
+  nginx:
+    build: ./nginx
+    ports:
+      - "8189:80"
+    networks:
+      - mynetwork
+    environment:
+      - BASIC_USERNAME=admin
+      - BASIC_PASSWORD=admin
 
 networks:
-  test-network:
+  mynetwork:
     driver: bridge
