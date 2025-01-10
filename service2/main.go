@@ -21,6 +21,7 @@ func main() {
 
 	http.HandleFunc("/stop-all-containers", stopAllContainers)
 
+	fmt.Println("golang-service is running on port 3001")
 	err := http.ListenAndServe(":3001", nil)
 	if err != nil {
 		fmt.Printf("error starting server: %s\n", err)

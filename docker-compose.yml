@@ -1,22 +1,8 @@
 services:
-  node-service-1:
+  node-service:
     build: ./service1
     environment:
       - PORT=3000 # check why this makes it work
-    networks:
-      - mynetwork
-
-  node-service-2:
-    build: ./service1
-    environment:
-      - PORT=3000
-    networks:
-      - mynetwork
-
-  node-service-3:
-    build: ./service1
-    environment:
-      - PORT=3000
     networks:
       - mynetwork
 
@@ -38,6 +24,13 @@ services:
     environment:
       - BASIC_USERNAME=admin
       - BASIC_PASSWORD=admin
+
+  api-gateway:
+    build: ./api-gateway
+    ports:
+      - "8197:8197"
+    networks:
+      - mynetwork
 
 networks:
   mynetwork:

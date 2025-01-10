@@ -1,7 +1,6 @@
 import { useState } from "react";
 
-const ROOT_URL = "/api";
-// 'http://localhost:3000/api/containers'
+const ROOT_URL = "http://localhost:8197/api";
 
 function App() {
   const [text, setText] = useState("");
