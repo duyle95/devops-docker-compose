@@ -15,8 +15,8 @@ services:
     networks:
       - mynetwork
 
-  nginx:
-    build: ./nginx
+  frontend:
+    build: ./frontend
     ports:
       - "8198:80"
     networks:
