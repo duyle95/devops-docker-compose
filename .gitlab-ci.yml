@@ -8,6 +8,8 @@ build:
     - echo "Building Docker images"
     - docker-compose build
 
+# TODO: add a test stage
+
 deploy:
   stage: deploy
   script:
