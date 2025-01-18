@@ -1,29 +1,29 @@
 import { useState } from "react";
 
-const ROOT_URL = "http://localhost:8197/api";
+const ROOT_URL = "http://localhost:8197";
 
 function App() {
   const [text, setText] = useState("");
 
   const fetchContainerInfo = async () => {
-    const response = await fetch(`${ROOT_URL}/get-container-info`);
+    const response = await fetch(`${ROOT_URL}/request`);
 
     const text = await response.text();
 
     setText(text);
   };
 
-  const stopAllContainers = async () => {
-    const response = await fetch(`${ROOT_URL}/stop-all-containers`, {
-      method: "POST",
-    });
+  // const stopAllContainers = async () => {
+  //   const response = await fetch(`${ROOT_URL}/stop-all-containers`, {
+  //     method: "POST",
+  //   });
 
-    if (response.status === 200) {
-      console.log("All containers stopped");
-    } else {
-      console.error("Error stopping all containers");
-    }
-  };
+  //   if (response.status === 200) {
+  //     console.log("All containers stopped");
+  //   } else {
+  //     console.error("Error stopping all containers");
+  //   }
+  // };
 
   return (
     <div>
@@ -40,7 +40,7 @@ function App() {
 
       <br />
 
-      <button onClick={() => stopAllContainers()}>STOP</button>
+      {/* <button onClick={() => stopAllContainers()}>STOP</button> */}
     </div>
   );
 }

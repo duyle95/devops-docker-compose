@@ -5,18 +5,31 @@ import (
 	"io"
 	"net/http"
 	"os"
+
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 )
+
+type GlobalState string
+
+const (
+	INIT     GlobalState = "INIT"
+	PAUSED   GlobalState = "PAUSED"
+	RUNNING  GlobalState = "RUNNING"
+	SHUTDOWN GlobalState = "SHUTDOWN"
+)
+
+var globalState GlobalState = INIT
 
 func main() {
 	os.Setenv("DOCKER_API_VERSION", "1.43")
-	http.HandleFunc("/api/get-container-info", getContainersInfo)
+	r := chi.NewRouter()
+	r.Use(middleware.Logger)
+	r.Get("/request", getContainersInfo)
 
 	fmt.Println("api-gateway is running on port 8197")
-	err := http.ListenAndServe(":8197", nil)
-	if err != nil {
-		fmt.Printf("error starting server: %s\n", err)
-		os.Exit(1)
-	}
+
+	http.ListenAndServe(":8197", r)
 }
 
 func getContainersInfo(w http.ResponseWriter, r *http.Request) {

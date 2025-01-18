@@ -5,12 +5,12 @@ services:
       - ./tests:/code
     working_dir: /code
     networks:
-      - mynetwork
+      - ci_mynetwork
     environment:
       host: "http://api-gateway:8197"
-    depends_on:
-      - api-gateway
-      - golang-service
-      - node-service
     
     command: bash -c "npm i && while ping -c1 api-gateway &>/dev/null; do sleep 1; done; echo 'api-gateway service is up' && npm test"
+
+networks:
+  ci_mynetwork:
+    external: true
