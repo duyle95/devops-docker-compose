@@ -9,7 +9,7 @@ describe('do integration tests', () => {
   });
 
   it('should return 200 when PUT /state', async () => {
-    const response = await fetch(apiGatewayUrl + '/state', { method: 'PUT' });
+    const response = await fetch(apiGatewayUrl + '/state', { method: 'PUT', body: "INIT" });
 
     expect(response.status).toBe(200);
   })

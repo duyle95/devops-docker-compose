@@ -31,6 +31,9 @@ services:
       - "8197:8197"
     networks:
       - mynetwork
+    environment:
+      - AUTH_USERNAME=admin
+      - AUTH_PASSWORD=admin
 
 networks:
   mynetwork:
