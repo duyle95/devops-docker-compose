@@ -13,17 +13,18 @@ function App() {
     setText(text);
   };
 
-  // const stopAllContainers = async () => {
-  //   const response = await fetch(`${ROOT_URL}/stop-all-containers`, {
-  //     method: "POST",
-  //   });
+  const stopAllContainers = async () => {
+    const response = await fetch(`${ROOT_URL}/state`, {
+      method: "PUT",
+      body: "SHUTDOWN"
+    });
 
-  //   if (response.status === 200) {
-  //     console.log("All containers stopped");
-  //   } else {
-  //     console.error("Error stopping all containers");
-  //   }
-  // };
+    if (response.status === 200) {
+      console.log("All containers stopped");
+    } else {
+      console.error("Error stopping all containers");
+    }
+  };
 
   return (
     <div>
@@ -40,7 +41,7 @@ function App() {
 
       <br />
 
-      {/* <button onClick={() => stopAllContainers()}>STOP</button> */}
+      <button onClick={() => stopAllContainers()}>STOP</button>
     </div>
   );
 }

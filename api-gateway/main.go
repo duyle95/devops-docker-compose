@@ -13,6 +13,7 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"github.com/go-chi/cors"
 )
 
 type GlobalState string
@@ -39,6 +40,14 @@ func main() {
 	os.Setenv("DOCKER_API_VERSION", "1.43")
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
+	r.Use(cors.Handler(cors.Options{
+		AllowedOrigins:   []string{"https://*", "http://*"},
+		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
+		ExposedHeaders:   []string{"Link"},
+		AllowCredentials: false,
+		MaxAge:           300, // Maximum value not ignored by any of major browsers
+	}))
 
 	r.Put("/state", handleChangeState)
 
@@ -113,9 +122,7 @@ func handleChangeState(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if nextState == SHUTDOWN {
-		// TODO: test shutdown feature
 		shutdownAllContainers()
-		return
 	}
 
 	fmt.Printf("Changing from %s to %s \n", globalState, nextState)
@@ -129,7 +136,7 @@ func handleChangeState(w http.ResponseWriter, r *http.Request) {
 }
 
 func shutdownAllContainers() {
-	res, err := http.Get("http://node-service:3000/api/stop-all-containers")
+	res, err := http.Post("http://node-service:3000/api/stop-all-containers", "", nil)
 	if err != nil {
 		fmt.Printf("error making http request: %s\n", err)
 		os.Exit(1)
@@ -140,9 +147,6 @@ func shutdownAllContainers() {
 }
 
 func getContainersInfo(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
-
 	res, err := http.Get("http://node-service:3000/api/get-container-info")
 	if err != nil {
 		fmt.Printf("error making http request: %s\n", err)
