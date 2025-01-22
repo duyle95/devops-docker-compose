@@ -1,17 +1,24 @@
 stages:
   - build
+  - test
   - deploy
 
 build:
   stage: build
   script:
     - echo "Building Docker images"
-    - docker-compose build
+    - docker-compose -p ci -f docker-compose.yml -f docker-compose.tests.yml build
 
-# TODO: add a test stage
+test:
+  stage: test
+  script:
+    - echo "Running tests"
+    - docker-compose -p ci -f docker-compose.yml up -d
+    - docker-compose -p ci -f docker-compose.tests.yml up
+    - docker-compose -p ci -f docker-compose.yml -f docker-compose.tests.yml down
 
 deploy:
   stage: deploy
   script:
     - echo "Deploying Docker Compose app"
-    - docker-compose up -d
+    - docker-compose -f docker-compose.yml up -d
