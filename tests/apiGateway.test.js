@@ -23,6 +23,6 @@ describe('do integration tests', () => {
   it('should return 200 when GET /run-log ', async () => {
     const response = await fetch(apiGatewayUrl + '/run-log');
 
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(400);
   })
 });

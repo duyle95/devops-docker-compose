@@ -13,9 +13,7 @@ test:
   stage: test
   script:
     - echo "Running tests"
-    - docker-compose -p ci -f docker-compose.yml up -d
-    - docker-compose -p ci -f docker-compose.tests.yml up
-    - docker-compose -p ci -f docker-compose.yml -f docker-compose.tests.yml down
+    - ./test.sh
 
 deploy:
   stage: deploy

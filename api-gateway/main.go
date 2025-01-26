@@ -81,7 +81,7 @@ func logStateChangeToFile(oldState GlobalState, newState GlobalState) {
 	f, err := os.OpenFile("state-changelog.txt", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
 		fmt.Printf("error opening file: %s\n", err)
-		os.Exit(1)
+		panic(err)
 	}
 	defer f.Close()
 
@@ -139,7 +139,7 @@ func shutdownAllContainers() {
 	res, err := http.Post("http://node-service:3000/api/stop-all-containers", "", nil)
 	if err != nil {
 		fmt.Printf("error making http request: %s\n", err)
-		os.Exit(1)
+		panic(err)
 	}
 	if res.StatusCode != http.StatusOK {
 		fmt.Printf("error stopping all containers: %s\n", res.Status)
@@ -150,13 +150,13 @@ func getContainersInfo(w http.ResponseWriter, r *http.Request) {
 	res, err := http.Get("http://node-service:3000/api/get-container-info")
 	if err != nil {
 		fmt.Printf("error making http request: %s\n", err)
-		os.Exit(1)
+		panic(err)
 	}
 
 	resBody, err := io.ReadAll(res.Body)
 	if err != nil {
 		fmt.Printf("client: could not read response body: %s\n", err)
-		os.Exit(1)
+		panic(err)
 	}
 
 	w.Header().Set("Content-Type", "text/plain")
@@ -169,7 +169,7 @@ func getRunLog(w http.ResponseWriter, r *http.Request) {
 	content, err := os.ReadFile("state-changelog.txt")
 	if err != nil {
 		fmt.Printf("error reading file: %s\n", err)
-		os.Exit(1)
+		panic(err)
 	}
 
 	w.Header().Set("Content-Type", "text/plain")

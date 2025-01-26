@@ -34,3 +34,7 @@ curl localhost:8197/state -X PUT -d "SHUTDOWN" \
     -H "Accept: text/plain"
 
 curl localhost:8197/run-log -H "Content-Type: text/plain" -H "Accept: text/plain"
+
+curl localhost:8197/state -X GET -H "Content-Type: text/plain" -H "Accept: text/plain"
+
+curl localhost:8197/request -X GET -H "Content-Type: text/plain" -H "Accept: text/plain"
