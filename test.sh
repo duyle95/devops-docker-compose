@@ -14,8 +14,6 @@ if [ $? -ne 0 ] ; then
 fi
 
 TEST_EXIT_CODE=`docker wait ci-tests-1`
-echo "TEST_EXIT_CODE: '$TEST_EXIT_CODE'"
-
 if [ "$TEST_EXIT_CODE" -ne 0 ] ; then
   printf "${RED}Tests Failed${NC} - Exit Code: $TEST_EXIT_CODE\n"
 else
