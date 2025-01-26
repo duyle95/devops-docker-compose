@@ -11,8 +11,10 @@ build:
 
 test:
   stage: test
+  
   script:
     - echo "Running tests"
+    - chmod +x ./test.sh
     - ./test.sh
 
 deploy:
